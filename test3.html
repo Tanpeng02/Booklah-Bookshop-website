@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Gateway</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <style>
+        /* Reset default margin and padding */
+        body, h1, h2, p {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set background and font styles */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Container styles */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Heading styles */
+        h1 {
+            font-size: 28px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Form styles */
+        form {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        /* Button styles with gradient background */
+        button {
+            background: linear-gradient(to bottom, #FFA500, #FF8C00); /* Orange gradient */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(to bottom, #FF8C00, #FF6B00); /* Darker orange gradient on hover */
+        }
+
+        /* Result styles with border and shadow */
+        #bookingResult {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #FFA500; /* Orange border */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+        }
+
+        /* Add some spacing between elements */
+        .spacing {
+            margin-bottom: 20px;
+        }
+
+        /* Add to Cart button styles */
+        #addToCartBtn {
+            background-color: #FFA500;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s ease;
+            margin-top: 20px;
+        }
+
+        #addToCartBtn:hover {
+            background-color: #FF8C00; /* Darker orange on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Our Booking Gateway</h1>
+        <form id="bookingForm">
+            <div class="spacing">
+                <label for="dateRange">Select Booking Dates:</label>
+                <input type="text" id="dateRange" name="dateRange" required>
+            </div>
+            <div class="spacing">
+                <label>Is the book new or used?</label>
+                <button type="button" onclick="calculatePrice('new')">New Book</button>
+                <button type="button" onclick="calculatePrice('used')">Used Book</button>
+            </div>
+            <button type="button" id="addToCartBtn" onclick="addToCart()">Add to Cart</button>
+        </form>
+
+        <div id="bookingResult"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#dateRange').daterangepicker({
+                startDate: moment(),
+                endDate: moment(),
+                minDate: moment(),
+                opens: 'left',
+                showDropdowns: true,
+                linkedCalendars: false,
+            });
+        });
+
+        let selectedBookType = 'new'; // Default to 'new' book type
+
+        function calculatePrice(bookType) {
+            selectedBookType = bookType; // Update selected book type
+            const dateRange = document.getElementById('dateRange').value;
+
+            // Split the selected range into start and end dates
+            const [startDateStr, endDateStr] = dateRange.split(' - ');
+            const startDate = moment(startDateStr, 'MM/DD/YYYY');
+            const endDate = moment(endDateStr, 'MM/DD/YYYY');
+
+            // Calculate the period between the selected dates
+            const periodInDays = endDate.diff(startDate, 'days');
+            const periodInMonths = endDate.diff(startDate, 'months', true);
+
+            // Calculate the rental price based on book type
+            let rentalPrice;
+            if (bookType === 'new') {
+                rentalPrice = periodInDays * 1.0; // New book rate
+            } else if (bookType === 'used') {
+                rentalPrice = periodInDays * 0.5; // Used book rate
+            }
+
+            // Display the chosen date period and rental price
+            const bookingResult = document.getElementById('bookingResult');
+            bookingResult.innerHTML = `Booking confirmed for ${startDateStr} to ${endDateStr}.<br>Duration: ${periodInDays} days (${periodInMonths.toFixed(2)} months).<br>Rental Price: RM ${rentalPrice.toFixed(2)}.`;
+        }
+        // Retrieving data from localStorage
+        const storedUsername = localStorage.getItem('1');
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + expirationDays);
+
+// Create the cookie string with attributes
+        const cookieString = `${storedUsername}=${periodInDays}; expires=${expirationDate.toUTCString()}; path=/`;
+        document.cookie = cookieString;
+
+// Set the cookie
+        
+       
+       
+
+        function addToCart() {
+            // You can implement cart functionality here, e.g., add the selected book and details to a cart object.
+            // For this example, we'll display an alert message.
+            const bookTypeText = selectedBookType === 'new' ? 'New Book' : 'Used Book';
+            alert(`Added ${storedUsername} to the cart. Total Price: RM ${document.getElementById('bookingResult').innerText.split('RM ')[1]}`);
+            
+            window.location.href = 'gallery.html';
+
+            
+        }
+    </script>
+</body>
+</html>
+

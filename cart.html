@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shopping Cart</title>
+    <style>
+        /* Add your CSS styling here for the cart page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #ed550f;
+            color: #fff;
+            margin: 0;
+        }
+
+        .cart-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .total {
+            text-align: right;
+            padding-right: 20px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .total strong {
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .total span {
+            display: inline-block;
+            padding: 5px 10px;
+            color: #070000;
+            border-radius: 5px;
+        }
+
+        .checkout-button {
+            display: block;
+            width: 100%;
+            background-color: #ed550f;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Shopping Cart</h1>
+
+    <div class="cart-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Book Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Period (Days)</th>
+                    <th>Rental Price (RM)</th>
+                    <th>Book Type</th>
+                </tr>
+            </thead>
+            <tbody id="cartItems">
+                <!-- Cart items will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <div class="total">
+            <strong>Total Rental Price:</strong> <span id="totalPrice">RM 0.00</span>
+        </div>
+
+        <button class="checkout-button" id="checkoutButton">Checkout</button>
+    </div>
+
+    <script>
+        // Retrieve cart items from localStorage
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Reference to the cartItems tbody, totalPrice span, and checkout button
+        const cartItemsElement = document.getElementById('cartItems');
+        const totalPriceElement = document.getElementById('totalPrice');
+        const checkoutButton = document.getElementById('checkoutButton');
+
+        // Initialize total price
+        let totalRentalPrice = 0;
+
+        // Function to clear cart items from localStorage
+        function clearCart() {
+            localStorage.removeItem('cart');
+            // Clear the cart items from the page as well
+            cartItemsElement.innerHTML = '';
+            totalRentalPrice = 0;
+            totalPriceElement.textContent = 'RM 0.00';
+        }
+
+        // Populate the cart items table
+        cart.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.bookName}</td>
+                <td>${item.startDate}</td>
+                <td>${item.endDate}</td>
+                <td>${item.periodInDays}</td>
+                <td>${item.rentalPrice.toFixed(2)}</td>
+                <td>${item.type}</td>
+            `;
+            cartItemsElement.appendChild(row);
+
+            // Add the rental price to the total
+            totalRentalPrice += item.rentalPrice;
+        });
+
+        // Update the total rental price
+        totalPriceElement.textContent = `RM ${totalRentalPrice.toFixed(2)}`;
+
+        // Add a click event listener to the checkout button
+        checkoutButton.addEventListener('click', () => {
+            // Clear the cart and update the page
+            clearCart();
+            alert('Thank you for your purchase! Your cart has been cleared.');
+            window.location.href = 'about.html';
+        });
+    </script>
+</body>
+</html>
